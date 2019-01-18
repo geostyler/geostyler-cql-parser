@@ -212,7 +212,8 @@ export class CqlParser {
   buildAst(tokens: Token[]) {
     const {
       precedence,
-      operatorsMap
+      operatorsMap,
+      combinationOperatorsMap
     } = this;
     const operatorStack: any[] = [];
     const postfix: Token[]  = [];
@@ -274,7 +275,8 @@ export class CqlParser {
           case 'LOGICAL':
             const rhs = buildTree(),
               lhs = buildTree();
-            return ['&&', lhs, rhs];
+            const combinationOperator = combinationOperatorsMap[token.text];
+            return [combinationOperator, lhs, rhs];
           case 'NOT':
             const operand = buildTree();
             return ['!', operand];
@@ -334,19 +336,26 @@ export class CqlParser {
   }
 
   write(filter: Filter): string | undefined {
+    const {
+      operatorReverseMap,
+      combinationOperatorsReverseMap,
+      write
+    } = this;
     const operator = filter[0];
+    const cqlOperator = operatorReverseMap[operator];
     switch (operator) {
       case '!':
-        return `NOT ( ${this.write(filter[1])} )`;
+        return `NOT ( ${write(filter[1])} )`;
       case '&&':
       case '||':
         let cqlFilter: string = '';
+        const cqlCombinationOperator = combinationOperatorsReverseMap[operator];
         filter.forEach((filterElement, index: number) => {
           if (index > 0) {
-            if (index = 1) {
-              cqlFilter += `${this.write(filter[index])} `;
+            if (index === 1) {
+              cqlFilter += `${write(filter[index])} `;
             } else {
-              cqlFilter += `${operator} ${this.write(filter[index])}`;
+              cqlFilter += `${cqlCombinationOperator} ${write(filter[index])}`;
             }
           }
         });
@@ -358,7 +367,15 @@ export class CqlParser {
       case '<=':
       case '>':
       case '>=':
-        return `${filter[1]} ${filter[0]} ${filter[2]}`;
+        const valueIsString = _isString(filter[2]);
+        let value = filter[2];
+        if (valueIsString) {
+          const containWhiteSpaces = value.includes(' ');
+          if (containWhiteSpaces) {
+            value = `'${value}'`;
+          }
+        }
+        return `${filter[1]} ${cqlOperator} ${value}`;
       case undefined:
         break;
       default:
