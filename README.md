@@ -1,5 +1,5 @@
 [![Greenkeeper badge](https://badges.greenkeeper.io/terrestris/geostyler-cql-parser.svg)](https://greenkeeper.io/)
-[![Build Status](https://travis-ci.com/terrestris/geostyler-cql-parser.svg?branch=master)](https://travis-ci.com/terrestris/geostyler-qgis-parser)
+[![Build Status](https://travis-ci.com/terrestris/geostyler-cql-parser.svg?branch=master)](https://travis-ci.com/terrestris/geostyler-cql-parser)
 [![Coverage Status](https://coveralls.io/repos/github/terrestris/geostyler-cql-parser/badge.svg?branch=master)](https://coveralls.io/github/terrestris/geostyler-cql-parser?branch=master)
 
 # geostyler-cql-parser
