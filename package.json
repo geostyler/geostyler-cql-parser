@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Translates CQL Filters and Geostyler Style Filters",
   "main": "build/dist/CqlParser.js",
-  "types": "dist/index.d.ts",
+  "types": "build/dist/CqlParser.d.ts",
   "files": [
     "build",
     "index.d.ts",
