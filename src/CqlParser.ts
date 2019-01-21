@@ -327,20 +327,30 @@ export class CqlParser {
     return result;
   }
 
-  read(text: string): Filter {
+  read(text: string | undefined): Filter | undefined {
     const {
       buildAst,
       tokenize
     } = this;
+
+    if (!text || text.length === 0) {
+      return undefined;
+    }
+
     return buildAst(tokenize(text));
   }
 
-  write(filter: Filter): string | undefined {
+  write(filter: Filter | undefined): string | undefined {
     const {
       operatorReverseMap,
       combinationOperatorsReverseMap,
       write
     } = this;
+
+    if (!Array.isArray(filter) || filter.length < 2) {
+      return undefined;
+    }
+
     const operator = filter[0];
     const cqlOperator = operatorReverseMap[operator];
     switch (operator) {
