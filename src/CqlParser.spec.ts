@@ -1,4 +1,5 @@
 import { CqlParser } from './CqlParser';
+import { Filter } from 'geostyler-style';
 
 describe('CqlParser', () => {
   let cqlParser: CqlParser;
@@ -14,6 +15,12 @@ describe('CqlParser', () => {
   describe('#read', () => {
     it('is defined', () => {
       expect(cqlParser.read).toBeDefined();
+    });
+    it('returns undefined for empty strings', () => {
+      const cqlFilter1 = undefined;
+      const cqlFilter2 = '';
+      expect(cqlParser.read(cqlFilter1)).toBeUndefined();
+      expect(cqlParser.read(cqlFilter2)).toBeUndefined();
     });
     it('can read String Comparison Filters', () => {
       const cqlFilter = 'Name = Peter';
@@ -61,6 +68,14 @@ describe('CqlParser', () => {
   describe('#write', () => {
     it('is defined', () => {
       expect(cqlParser.write).toBeDefined();
+    });
+    it('returns undefined for illegal filters', () => {
+      const cqlFilter1 = undefined;
+      const cqlFilter2: Filter = ['=='];
+      const cqlFilter3: Filter = [];
+      expect(cqlParser.write(cqlFilter1)).toBeUndefined();
+      expect(cqlParser.write(cqlFilter2)).toBeUndefined();
+      expect(cqlParser.write(cqlFilter3)).toBeUndefined();
     });
     it('can write String Comparison Filters', () => {
       const geoStylerFilter = ['==', 'Name', 'Peter'];
