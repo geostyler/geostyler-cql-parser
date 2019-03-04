@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@types/jest": "24.0.5",
-    "@types/lodash": "4.14.121",
+    "@types/lodash": "4.14.122",
     "awesome-typescript-loader": "5.2.1",
     "coveralls": "3.0.3",
     "jest": "23.6.0",
