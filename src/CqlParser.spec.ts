@@ -80,7 +80,7 @@ describe('CqlParser', () => {
     it('can write String Comparison Filters', () => {
       const geoStylerFilter = ['==', 'Name', 'Peter'];
       const got = cqlParser.write(geoStylerFilter);
-      expect(got).toEqual('Name = Peter');
+      expect(got).toEqual('Name = \'Peter\'');
     });
     it('can write Number Comparison Filters', () => {
       const geoStylerFilter1 = ['==', 'Age', 12];
@@ -102,12 +102,23 @@ describe('CqlParser', () => {
         ['==', 'Name', 'Peter Schmidt'],
         ['==', 'Height', 1.75]
       ];
-      const cqlFilter1 = 'Age = 12 AND Name = Peter';
+      const cqlFilter1 = 'Age = 12 AND Name = \'Peter\'';
       const cqlFilter2 = 'Name = \'Peter Schmidt\' OR Height = 1.75';
       const got1 = cqlParser.write(geoStylerFilter1);
       const got2 = cqlParser.write(geoStylerFilter2);
       expect(got1).toEqual(cqlFilter1);
       expect(got2).toEqual(cqlFilter2);
+    });
+    it('can write multiple Combination Filters', () => {
+      const geoStylerFilter1 = [
+        '&&',
+        ['==', 'Age', 12],
+        ['==', 'Name', 'Peter'],
+        ['==', 'Car', 'Bentley']
+      ];
+      const cqlFilter1 = 'Age = 12 AND Name = \'Peter\' AND Car = \'Bentley\'';
+      const got1 = cqlParser.write(geoStylerFilter1);
+      expect(got1).toEqual(cqlFilter1);
     });
   });
 });
