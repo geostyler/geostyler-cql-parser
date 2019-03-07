@@ -27,6 +27,11 @@ describe('CqlParser', () => {
       const got = cqlParser.read(cqlFilter);
       expect(got).toEqual(['==', 'Name', 'Peter']);
     });
+    it('can read number Comparison Filters', () => {
+      const cqlFilter = 'Age = 12.3';
+      const got = cqlParser.read(cqlFilter);
+      expect(got).toEqual(['==', 'Age', 12.3]);
+    });
     it('can read Strings with quotation marks Comparison Filters', () => {
       const cqlFilter1 = `Name = "Peter"`;
       const cqlFilter2 = `Name = 'Peter'`;
@@ -46,6 +51,26 @@ describe('CqlParser', () => {
     it('can read Combination Filters', () => {
       const cqlFilter1 = 'Age = 12 AND Name = Peter';
       const cqlFilter2 = 'Name = "Peter Schmidt" OR Height = 1.75';
+      const got1 = cqlParser.read(cqlFilter1);
+      const got2 = cqlParser.read(cqlFilter2);
+      expect(got1).toEqual(
+        [
+          '&&',
+          ['==', 'Age', 12],
+          ['==', 'Name', 'Peter']
+        ]
+      );
+      expect(got2).toEqual(
+        [
+          '||',
+          ['==', 'Name', 'Peter Schmidt'],
+          ['==', 'Height', 1.75]
+        ]
+      );
+    });
+    it('can read Combination Filters with parens', () => {
+      const cqlFilter1 = '( Age = 12 AND Name = Peter )';
+      const cqlFilter2 = '( Name = "Peter Schmidt" OR Height = 1.75 )';
       const got1 = cqlParser.read(cqlFilter1);
       const got2 = cqlParser.read(cqlFilter2);
       expect(got1).toEqual(
