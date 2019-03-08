@@ -150,7 +150,7 @@ export class CqlParser {
   tryToken(text: any, pattern: Pattern) {
     if (pattern instanceof RegExp) {
         return pattern.exec(text);
-    } else {
+    } else if (pattern) {
         return pattern(text);
     }
   }
@@ -360,15 +360,7 @@ export class CqlParser {
       case '||':
         let cqlFilter: string = '';
         const cqlCombinationOperator = combinationOperatorsReverseMap[operator];
-        filter.forEach((filterElement, index: number) => {
-          if (index > 0) {
-            if (index === 1) {
-              cqlFilter += `${write(filter[index])} `;
-            } else {
-              cqlFilter += `${cqlCombinationOperator} ${write(filter[index])}`;
-            }
-          }
-        });
+        cqlFilter += filter.slice(1).map(write).join(` ${cqlCombinationOperator} `);
         return cqlFilter;
       case '==':
       case '*=':
@@ -380,10 +372,7 @@ export class CqlParser {
         const valueIsString = _isString(filter[2]);
         let value = filter[2];
         if (valueIsString) {
-          const containWhiteSpaces = value.includes(' ');
-          if (containWhiteSpaces) {
-            value = `'${value}'`;
-          }
+          value = `'${value}'`;
         }
         return `${filter[1]} ${cqlOperator} ${value}`;
       case undefined:
