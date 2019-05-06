@@ -11,7 +11,7 @@ import {
 } from 'lodash';
 
 type PatternName = 'PROPERTY' | 'COMPARISON' | 'VALUE' | 'LOGICAL' | 'LPAREN' | 'RPAREN'
-| 'SPATIAL' | 'NOT' | 'BETWEEN' | 'GEOMETRY' | 'END' | 'COMMA' | 'IS_NULL';
+  | 'SPATIAL' | 'NOT' | 'BETWEEN' | 'GEOMETRY' | 'END' | 'COMMA' | 'IS_NULL';
 type Pattern = RegExp | Function;
 type PatternsObject = {
   [name: string]: Pattern
@@ -19,7 +19,7 @@ type PatternsObject = {
 type FollowsObject = {
   [name: string]: PatternName[]
 };
-type CqlOperator = '=' |'<>' | '<' | '<=' | '>' | '>=' | 'LIKE' | 'BETWEEN' | 'IS NULL';
+type CqlOperator = '=' | '<>' | '<' | '<=' | '>' | '>=' | 'LIKE' | 'BETWEEN' | 'IS NULL';
 
 type OperatorsMap = {
   [cqlOperator: string]: Operator
@@ -65,7 +65,7 @@ export class CqlParser {
         } else if (doubleQuotedText) {
           return [doubleQuotedText][0];
         } else {
-          return [text.split(' ')[0]];
+          return [text.split(/[\s)]/)[0]];
         }
       } else {
         return false;
@@ -80,16 +80,16 @@ export class CqlParser {
   };
 
   follows: FollowsObject = {
-    LPAREN: ['GEOMETRY', 'SPATIAL', 'PROPERTY', 'VALUE', 'LPAREN'],
+    LPAREN: ['GEOMETRY', 'SPATIAL', 'PROPERTY', 'LPAREN', 'VALUE'],
     RPAREN: ['NOT', 'LOGICAL', 'END', 'RPAREN'],
     PROPERTY: ['COMPARISON', 'BETWEEN', 'COMMA', 'IS_NULL'],
     BETWEEN: ['VALUE'],
     IS_NULL: ['END'],
     COMPARISON: ['VALUE'],
-    COMMA: ['GEOMETRY', 'VALUE', 'PROPERTY'],
+    COMMA: ['GEOMETRY', 'PROPERTY', 'VALUE'],
     VALUE: ['LOGICAL', 'COMMA', 'RPAREN', 'END'],
     SPATIAL: ['LPAREN'],
-    LOGICAL: ['PROPERTY', 'NOT', 'VALUE', 'SPATIAL', 'LPAREN'],
+    LOGICAL: ['PROPERTY', 'NOT', 'LPAREN', 'SPATIAL', 'VALUE'],
     NOT: ['PROPERTY', 'LPAREN'],
     GEOMETRY: ['COMMA', 'RPAREN']
   };
@@ -131,13 +131,13 @@ export class CqlParser {
       .forEach((operator: CqlOperator) => {
         const value = operatorsMap[operator];
         operatorReverseMap[value] = operator;
-    });
+      });
 
     Object.keys(combinationOperatorsMap)
       .forEach((combinationOperator: 'AND' | 'OR') => {
         const value: CombinationOperator = combinationOperatorsMap[combinationOperator];
         combinationOperatorsReverseMap[value] = combinationOperator;
-    });
+      });
 
     this.nextToken = this.nextToken.bind(this);
     this.tokenize = this.tokenize.bind(this);
@@ -149,9 +149,9 @@ export class CqlParser {
 
   tryToken(text: any, pattern: Pattern) {
     if (pattern instanceof RegExp) {
-        return pattern.exec(text);
+      return pattern.exec(text);
     } else if (pattern) {
-        return pattern(text);
+      return pattern(text);
     }
   }
 
@@ -164,24 +164,24 @@ export class CqlParser {
     let token;
     let len = patternNames.length;
     for (i = 0; i < len; i++) {
-        token = patternNames[i];
-        const pattern = patterns[token];
-        const matches = tryToken(text, pattern);
-        if (matches) {
-            const match = matches[0];
-            const remainder = text.substr(match.length).replace(/^\s*/, '');
-            return {
-                type: token,
-                text: match,
-                remainder: remainder
-            };
-        }
+      token = patternNames[i];
+      const pattern = patterns[token];
+      const matches = tryToken(text, pattern);
+      if (matches) {
+        const match = matches[0];
+        const remainder = text.substr(match.length).replace(/^\s*/, '');
+        return {
+          type: token,
+          text: match,
+          remainder: remainder
+        };
+      }
     }
 
-    let msg = `ERROR: In parsing: [${text }], expected one of: `;
+    let msg = `ERROR: In parsing: [${text}], expected one of: `;
     for (i = 0; i < len; i++) {
-        token = patternNames[i];
-        msg += `\n    ${token}: ${patterns[token]}`;
+      token = patternNames[i];
+      msg += `\n    ${token}: ${patterns[token]}`;
     }
 
     throw new Error(msg);
@@ -216,7 +216,7 @@ export class CqlParser {
       combinationOperatorsMap
     } = this;
     const operatorStack: any[] = [];
-    const postfix: Token[]  = [];
+    const postfix: Token[] = [];
 
     tokens.forEach(token => {
       switch (token.type) {
@@ -337,10 +337,11 @@ export class CqlParser {
       return undefined;
     }
 
-    return buildAst(tokenize(text));
+    const tokenizedText = tokenize(text);
+    return buildAst(tokenizedText);
   }
 
-  write(filter: Filter | undefined): string | undefined {
+  write(filter: Filter | undefined, isChild?: boolean): string | undefined {
     const {
       operatorReverseMap,
       combinationOperatorsReverseMap,
@@ -353,6 +354,7 @@ export class CqlParser {
 
     const operator = filter[0];
     const cqlOperator = operatorReverseMap[operator];
+
     switch (operator) {
       case '!':
         return `NOT ( ${write(filter[1])} )`;
@@ -360,8 +362,15 @@ export class CqlParser {
       case '||':
         let cqlFilter: string = '';
         const cqlCombinationOperator = combinationOperatorsReverseMap[operator];
-        cqlFilter += filter.slice(1).map(write).join(` ${cqlCombinationOperator} `);
-        return cqlFilter;
+        cqlFilter += filter
+          .slice(1)
+          .map(f => write(f, true))
+          .join(` ${cqlCombinationOperator} `);
+        if (isChild) {
+          return `(${cqlFilter})`;
+        } else {
+          return cqlFilter;
+        }
       case '==':
       case '*=':
       case '!=':
@@ -380,7 +389,7 @@ export class CqlParser {
       default:
         throw new Error(`Can't encode: ${filter}`);
     }
-    return ;
+    return;
   }
 }
 
