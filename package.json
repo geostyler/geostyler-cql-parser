@@ -42,8 +42,8 @@
     "test": "jest --coverage"
   },
   "devDependencies": {
-    "@types/jest": "24.0.12",
-    "@types/lodash": "4.14.122",
+    "@types/jest": "24.0.13",
+    "@types/lodash": "4.14.129",
     "awesome-typescript-loader": "5.2.1",
     "coveralls": "3.0.3",
     "jest": "23.6.0",
@@ -52,7 +52,7 @@
     "tslint": "5.12.1",
     "typescript": "3.2.4",
     "uglifyjs-webpack-plugin": "2.1.2",
-    "webpack": "4.30.0",
+    "webpack": "4.31.0",
     "webpack-cli": "3.3.2"
   },
   "jest": {
