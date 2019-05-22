@@ -42,11 +42,11 @@
     "test": "jest --coverage"
   },
   "devDependencies": {
-    "@babel/core": "7.4.4",
+    "@babel/core": "7.4.5",
     "@babel/plugin-proposal-class-properties": "7.4.4",
     "@babel/plugin-proposal-object-rest-spread": "7.4.4",
     "@babel/polyfill": "7.4.4",
-    "@babel/preset-env": "7.4.4",
+    "@babel/preset-env": "7.4.5",
     "@babel/preset-typescript": "7.3.3",
     "babel-jest": "24.7.1",
     "@types/jest": "24.0.13",
