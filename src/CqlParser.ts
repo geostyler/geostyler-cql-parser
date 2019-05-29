@@ -1,7 +1,11 @@
 import {
   CombinationOperator,
   Operator,
-  Filter
+  Filter,
+  Expression,
+  LiteralValue,
+  PropertyName,
+  FunctionCall
 } from 'geostyler-style';
 
 import {
@@ -131,6 +135,7 @@ export class CqlParser {
     this.buildAst = this.buildAst.bind(this);
     this.read = this.read.bind(this);
     this.write = this.write.bind(this);
+    this.writeExpression = this.writeExpression.bind(this);
   }
 
   tryToken(text: any, pattern: Pattern) {
@@ -350,6 +355,27 @@ export class CqlParser {
     return buildAst(tokenizedText);
   }
 
+  writeExpression(expr: Expression): string {
+    if ((expr as LiteralValue).value) {
+      const val = expr as LiteralValue;
+      const valueIsString = _isString(val.value);
+      let value = val.value;
+      if (valueIsString) {
+        value = `'${value}'`;
+      }
+      return `${value}`;
+    }
+    if ((expr as FunctionCall).args) {
+      const func = expr as FunctionCall;
+      const args = func.args.map(this.writeExpression);
+      return `${func.name}(${args.join(', ')})`;
+    }
+    if ((expr as PropertyName).name) {
+      return (expr as PropertyName).name;
+    }
+    return '';
+  }
+
   write(filter: Filter | undefined, isChild?: boolean): string | undefined {
     const {
       operatorReverseMap,
@@ -387,12 +413,7 @@ export class CqlParser {
       case '<=':
       case '>':
       case '>=':
-        const valueIsString = _isString(filter[2]);
-        let value = filter[2];
-        if (valueIsString) {
-          value = `'${value}'`;
-        }
-        return `${filter[1]} ${cqlOperator} ${value}`;
+        return `${this.writeExpression(filter[1])} ${cqlOperator} ${this.writeExpression(filter[2])}`;
       case undefined:
         break;
       default:

@@ -190,13 +190,13 @@ describe('CqlParser', () => {
       expect(cqlParser.write(cqlFilter3)).toBeUndefined();
     });
     it('can write String Comparison Filters', () => {
-      const geoStylerFilter = ['==', 'Name', 'Peter'];
+      const geoStylerFilter = ['==', {name: 'Name'}, {value: 'Peter'}];
       const got = cqlParser.write(geoStylerFilter);
       expect(got).toEqual('Name = \'Peter\'');
     });
     it('can write Number Comparison Filters', () => {
-      const geoStylerFilter1 = ['==', 'Age', 12];
-      const geoStylerFilter2 = ['==', 'Height', 1.75];
+      const geoStylerFilter1 = ['==', {name: 'Age'}, {value: 12}];
+      const geoStylerFilter2 = ['==', {name: 'Height'}, {value: 1.75}];
       const got1 = cqlParser.write(geoStylerFilter1);
       const got2 = cqlParser.write(geoStylerFilter2);
       expect(got1).toEqual('Age = 12');
@@ -205,14 +205,14 @@ describe('CqlParser', () => {
     it('can write Combination Filters', () => {
       const geoStylerFilter1 = [
         '&&',
-        ['==', 'Age', 12],
-        ['==', 'Name', 'Peter']
+        ['==', {name: 'Age'}, {value: 12}],
+        ['==', {name: 'Name'}, {value: 'Peter'}]
       ];
       const geoStylerFilter2 =
       [
         '||',
-        ['==', 'Name', 'Peter Schmidt'],
-        ['==', 'Height', 1.75]
+        ['==', {name: 'Name'}, {value: 'Peter Schmidt'}],
+        ['==', {name: 'Height'}, {value: 1.75}]
       ];
       const cqlFilter1 = 'Age = 12 AND Name = \'Peter\'';
       const cqlFilter2 = 'Name = \'Peter Schmidt\' OR Height = 1.75';
@@ -221,12 +221,28 @@ describe('CqlParser', () => {
       expect(got1).toEqual(cqlFilter1);
       expect(got2).toEqual(cqlFilter2);
     });
+    it('can write filter expressions', () => {
+      const geoStylerFilter1 = [
+        '&&',
+        ['==', {name: 'Age'}, {value: 12}],
+        ['==', {name: 'Name'}, {name: 'upcase', args: [{name: 'lastname'}]}]
+      ];
+      const geoStylerFilter2 = [
+        '==', {name: 'nameandage'}, {name: 'concat', args: [{name: 'name'}, {value: 12}]}
+      ];
+      const cqlFilter1 = 'Age = 12 AND Name = upcase(lastname)';
+      const cqlFilter2 = 'nameandage = concat(name, 12)';
+      const got1 = cqlParser.write(geoStylerFilter1);
+      const got2 = cqlParser.write(geoStylerFilter2);
+      expect(got1).toEqual(cqlFilter1);
+      expect(got2).toEqual(cqlFilter2);
+    });
     it('can write multiple Combination Filters', () => {
       const geoStylerFilter1 = [
         '&&',
-        ['==', 'Age', 12],
-        ['==', 'Name', 'Peter'],
-        ['==', 'Car', 'Bentley']
+        ['==', {name: 'Age'}, {value: 12}],
+        ['==', {name: 'Name'}, {value: 'Peter'}],
+        ['==', {name: 'Car'}, {value: 'Bentley'}]
       ];
       const cqlFilter1 = 'Age = 12 AND Name = \'Peter\' AND Car = \'Bentley\'';
       const got1 = cqlParser.write(geoStylerFilter1);
@@ -236,31 +252,31 @@ describe('CqlParser', () => {
       const geoStylerFilter1 = [
         '&&', [
           '||',
-          ['==', 'Name', 'Peter'],
-          ['==', 'Name', 'Hilde']
+          ['==', {name: 'Name'}, {value: 'Peter'}],
+          ['==', {name: 'Name'}, {value: 'Hilde'}]
         ],
-        ['==', 'Age', 12]
+        ['==', {name: 'Age'}, {value: 12}]
       ];
       const geoStylerFilter2 = [
         '&&', [
           '||',
-          ['==', 'Age', 13],
-          ['==', 'Name', 'Peter']
+          ['==', {name: 'Age'}, {value: 13}],
+          ['==', {name: 'Name'}, {value: 'Peter'}]
         ], [
           '||',
-          ['==', 'Age', 13],
-          ['==', 'Name', 'Hilde']
+          ['==', {name: 'Age'}, {value: 13}],
+          ['==', {name: 'Name'}, {value: 'Hilde'}]
         ]
       ];
       const geoStylerFilter3 = [
         '||', [
           '&&',
-          ['==', 'Age', 12],
-          ['==', 'Name', 'Peter']
+          ['==', {name: 'Age'}, {value: 12}],
+          ['==', {name: 'Name'}, {value: 'Peter'}]
         ], [
           '&&',
-          ['==', 'Age', 12],
-          ['==', 'Name', 'Hilde']
+          ['==', {name: 'Age'}, {value: 12}],
+          ['==', {name: 'Name'}, {value: 'Hilde'}]
         ]
       ];
       const cqlFilter1 = '(Name = \'Peter\' OR Name = \'Hilde\') AND Age = 12';
