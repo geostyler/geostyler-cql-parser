@@ -1,7 +1,11 @@
 import {
   CombinationOperator,
   Operator,
-  Filter
+  Filter,
+  Expression,
+  LiteralValue,
+  PropertyName,
+  FunctionCall
 } from 'geostyler-style';
 
 import {
@@ -10,14 +14,11 @@ import {
   isNaN as _isNaN
 } from 'lodash';
 
-type PatternName = 'PROPERTY' | 'COMPARISON' | 'VALUE' | 'LOGICAL' | 'LPAREN' | 'RPAREN'
-  | 'SPATIAL' | 'NOT' | 'BETWEEN' | 'GEOMETRY' | 'END' | 'COMMA' | 'IS_NULL';
+type PatternName = 'IDENTIFIER' | 'COMPARISON' | 'VALUE' | 'LOGICAL' | 'LPAREN' | 'RPAREN'
+  | 'SPATIAL' | 'NOT' | 'BETWEEN' | 'GEOMETRY' | 'END' | 'COMMA' | 'IS_NULL' | 'FUNCTION_CALL';
 type Pattern = RegExp | Function;
 type PatternsObject = {
   [name: string]: Pattern
-};
-type FollowsObject = {
-  [name: string]: PatternName[]
 };
 type CqlOperator = '=' | '<>' | '<' | '<=' | '>' | '>=' | 'LIKE' | 'BETWEEN' | 'IS NULL';
 
@@ -44,55 +45,44 @@ type Token = {
 
 export class CqlParser {
 
-  tokens: PatternName[] = [
-    'PROPERTY', 'COMPARISON', 'VALUE', 'LOGICAL'
-  ];
-
   patterns: PatternsObject = {
-    PROPERTY: /^[_a-zA-Z]\w*/,
+    LPAREN: /^\(/,
+    RPAREN: /^\)/,
+    IDENTIFIER: /^[_a-zA-Z]\w*/,
+    FUNCTION_CALL: /^[_a-zA-Z]\w*\s*\(/,
     COMPARISON: /^(=|<>|<=|<|>=|>|LIKE)/i,
     IS_NULL: /^IS NULL/i,
     COMMA: /^,/,
     LOGICAL: /^(AND|OR)/i,
     VALUE: (text: any) => {
-      if (_isNumber(text)) {
-        return [text];
-      } else if (_isString(text)) {
-        const singleQuotedText = text.match(/[']([^']+)[']/);
-        const doubleQuotedText = text.match(/["]([^"]+)["]/);
-        if (singleQuotedText) {
-          return [singleQuotedText[0]];
-        } else if (doubleQuotedText) {
-          return [doubleQuotedText][0];
-        } else {
-          return [text.split(/[\s)]/)[0]];
-        }
-      } else {
-        return false;
+      const match = text.match(/^([0-9][^\s]*)|'([^']+)'|"([^"])+"/);
+      if (match) {
+        return [match[0]];
       }
+      return false;
     },
-    LPAREN: /^\(/,
-    RPAREN: /^\)/,
     SPATIAL: /^(BBOX|INTERSECTS|DWITHIN|WITHIN|CONTAINS)/i,
     NOT: /^NOT/i,
     BETWEEN: /^BETWEEN/i,
     END: /^$/
   };
 
-  follows: FollowsObject = {
-    LPAREN: ['GEOMETRY', 'SPATIAL', 'PROPERTY', 'LPAREN', 'VALUE'],
-    RPAREN: ['NOT', 'LOGICAL', 'END', 'RPAREN'],
-    PROPERTY: ['COMPARISON', 'BETWEEN', 'COMMA', 'IS_NULL'],
-    BETWEEN: ['VALUE'],
-    IS_NULL: ['END'],
-    COMPARISON: ['VALUE'],
-    COMMA: ['GEOMETRY', 'PROPERTY', 'VALUE'],
-    VALUE: ['LOGICAL', 'COMMA', 'RPAREN', 'END'],
-    SPATIAL: ['LPAREN'],
-    LOGICAL: ['PROPERTY', 'NOT', 'LPAREN', 'SPATIAL', 'VALUE'],
-    NOT: ['PROPERTY', 'LPAREN'],
-    GEOMETRY: ['COMMA', 'RPAREN']
-  };
+  patternNames: PatternName[] = [
+    'LPAREN',
+    'RPAREN',
+    'IS_NULL',
+    'NOT',
+    'LOGICAL',
+    'FUNCTION_CALL',
+    'IDENTIFIER',
+    'COMPARISON',
+    'VALUE',
+    'SPATIAL',
+    'BETWEEN',
+    'GEOMETRY',
+    'END',
+    'COMMA'
+  ];
 
   operatorsMap: OperatorsMap = {
     '=': '==',
@@ -145,6 +135,7 @@ export class CqlParser {
     this.buildAst = this.buildAst.bind(this);
     this.read = this.read.bind(this);
     this.write = this.write.bind(this);
+    this.writeExpression = this.writeExpression.bind(this);
   }
 
   tryToken(text: any, pattern: Pattern) {
@@ -155,10 +146,11 @@ export class CqlParser {
     }
   }
 
-  nextToken(text: any, patternNames: PatternName[]): Token {
+  nextToken(text: any): Token {
     const {
       patterns,
-      tryToken
+      tryToken,
+      patternNames
     } = this;
     let i;
     let token;
@@ -189,23 +181,16 @@ export class CqlParser {
 
   tokenize(text: string): Token[] {
     const {
-      nextToken,
-      follows
+      nextToken
     } = this;
     const results = [];
-    let expect: PatternName[] = ['NOT', 'PROPERTY', 'LPAREN'];
     let token: Token;
 
     do {
-      token = nextToken(text, expect);
+      token = nextToken(text);
       text = token.remainder;
-      expect = follows[token.type];
-      if (token.type !== 'END' && !expect) {
-        throw new Error('No follows list for ' + token.type);
-      }
       results.push(token);
     } while (token.type !== 'END');
-
     return results;
   }
 
@@ -220,7 +205,7 @@ export class CqlParser {
 
     tokens.forEach(token => {
       switch (token.type) {
-        case 'PROPERTY':
+        case 'IDENTIFIER':
         case 'GEOMETRY':
         case 'VALUE':
           postfix.push(token);
@@ -242,13 +227,21 @@ export class CqlParser {
         case 'LPAREN':
           operatorStack.push(token);
           break;
+        case 'FUNCTION_CALL':
+          operatorStack.push(token);
+          postfix.push(token);
+          break;
         case 'RPAREN':
           while (operatorStack.length > 0 &&
-            (operatorStack[operatorStack.length - 1].type !== 'LPAREN')
+            (operatorStack[operatorStack.length - 1].type !== 'LPAREN' &&
+            operatorStack[operatorStack.length - 1].type !== 'FUNCTION_CALL')
           ) {
             postfix.push(operatorStack.pop());
           }
-          operatorStack.pop(); // toss out the LPAREN
+          const marker = operatorStack.pop(); // toss out the LPAREN
+          if (marker.type === 'FUNCTION_CALL') {
+            postfix.push(marker);
+          }
 
           if (operatorStack.length > 0 &&
             operatorStack[operatorStack.length - 1].type === 'SPATIAL') {
@@ -304,10 +297,31 @@ export class CqlParser {
           case 'VALUE':
             const num = parseFloat(token.text);
             if (_isNaN(num)) {
-              return token.text.replace(/['"]/g, '');
+              return {
+                value: token.text.replace(/['"]/g, '')
+              };
             } else {
-              return num;
+              return {
+                value: num
+              };
             }
+          case 'FUNCTION_CALL':
+            const name = token.text.slice(0, token.text.length - 1);
+            const args: any = [];
+            let arg = postfix[postfix.length - 1];
+            while (arg !== token) {
+              args.unshift(buildTree());
+              arg = postfix[postfix.length - 1];
+            }
+            postfix.pop();
+            return {
+              name,
+              args
+            };
+          case 'IDENTIFIER':
+            return {
+              name: token.text
+            };
           default:
             return token.text;
         }
@@ -339,6 +353,27 @@ export class CqlParser {
 
     const tokenizedText = tokenize(text);
     return buildAst(tokenizedText);
+  }
+
+  writeExpression(expr: Expression): string {
+    if ((expr as LiteralValue).value) {
+      const val = expr as LiteralValue;
+      const valueIsString = _isString(val.value);
+      let value = val.value;
+      if (valueIsString) {
+        value = `'${value}'`;
+      }
+      return `${value}`;
+    }
+    if ((expr as FunctionCall).args) {
+      const func = expr as FunctionCall;
+      const args = func.args.map(this.writeExpression);
+      return `${func.name}(${args.join(', ')})`;
+    }
+    if ((expr as PropertyName).name) {
+      return (expr as PropertyName).name;
+    }
+    return '';
   }
 
   write(filter: Filter | undefined, isChild?: boolean): string | undefined {
@@ -378,12 +413,7 @@ export class CqlParser {
       case '<=':
       case '>':
       case '>=':
-        const valueIsString = _isString(filter[2]);
-        let value = filter[2];
-        if (valueIsString) {
-          value = `'${value}'`;
-        }
-        return `${filter[1]} ${cqlOperator} ${value}`;
+        return `${this.writeExpression(filter[1])} ${cqlOperator} ${this.writeExpression(filter[2])}`;
       case undefined:
         break;
       default:
