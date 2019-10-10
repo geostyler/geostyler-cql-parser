@@ -10,6 +10,3 @@ to TypeScript. Except that it writes Filters in the [GeoStyler Style](https://gi
 
 But you can easily transform the GeoStyler Styles to OL3 with the [GeoStyler OpenLayers Parser](https://github.com/geostyler/geostyler-openlayers-parser).
 So its just two steps from CQL Filter to OL3 Styles.
-
-### Issues
-Please provide related issues here https://github.com/geostyler/geostyler/issues
