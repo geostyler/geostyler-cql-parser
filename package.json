@@ -38,8 +38,8 @@
     "test": "jest --coverage"
   },
   "dependencies": {
-    "geostyler-style": "^2.0.0",
-    "lodash": "^4.17.11"
+    "geostyler-style": "^2.0.3",
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -58,7 +58,7 @@
     "ts-loader": "^5.3.3",
     "tslint": "^5.16.0",
     "typescript": "^3.4.5",
-    "webpack": "^4.35.2",
+    "webpack": "^4.41.4",
     "webpack-cli": "^3.3.5"
   }
 }
