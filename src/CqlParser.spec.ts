@@ -33,8 +33,8 @@ describe('CqlParser', () => {
       expect(got).toEqual(['==', 'Age', 12.3]);
     });
     it('can read Strings with quotation marks Comparison Filters', () => {
-      const cqlFilter1 = `Name = "Peter"`;
-      const cqlFilter2 = `Name = 'Peter'`;
+      const cqlFilter1 = 'Name = "Peter"';
+      const cqlFilter2 = 'Name = \'Peter\'';
       const got1 = cqlParser.read(cqlFilter1);
       const got2 = cqlParser.read(cqlFilter2);
       expect(got1).toEqual(['==', 'Name', 'Peter']);

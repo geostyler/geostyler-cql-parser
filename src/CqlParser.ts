@@ -14,32 +14,32 @@ type PatternName = 'PROPERTY' | 'COMPARISON' | 'VALUE' | 'LOGICAL' | 'LPAREN' | 
   | 'SPATIAL' | 'NOT' | 'BETWEEN' | 'GEOMETRY' | 'END' | 'COMMA' | 'IS_NULL';
 type Pattern = RegExp | Function;
 type PatternsObject = {
-  [name: string]: Pattern
+  [name: string]: Pattern;
 };
 type FollowsObject = {
-  [name: string]: PatternName[]
+  [name: string]: PatternName[];
 };
 type CqlOperator = '=' | '<>' | '<' | '<=' | '>' | '>=' | 'LIKE' | 'BETWEEN' | 'IS NULL';
 
 type OperatorsMap = {
-  [cqlOperator: string]: Operator
+  [cqlOperator: string]: Operator;
 };
 type CombinationOperatorsMap = {
-  [cqlOperator: string]: CombinationOperator
+  [cqlOperator: string]: CombinationOperator;
 };
 type OperatorsReverseMap = {
-  [cqlOperator: string]: CqlOperator
+  [cqlOperator: string]: CqlOperator;
 };
 type CombinationOperatorsReverseMap = {
-  [cqlOperator: string]: 'AND' | 'OR'
+  [cqlOperator: string]: 'AND' | 'OR';
 };
 type PrecedenceMap = {
-  [name: string]: 1 | 2 | 3
+  [name: string]: 1 | 2 | 3;
 };
 type Token = {
-  type: string,
-  text: string,
-  remainder: string
+  type: string;
+  text: string;
+  remainder: string;
 };
 
 export class CqlParser {
