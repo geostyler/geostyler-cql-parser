@@ -357,14 +357,16 @@ export class CqlParser {
 
     switch (operator) {
       case '!':
-        return `NOT ( ${write(filter[1])} )`;
+        // TODO this should be better typed, get rid of `as any`
+        return `NOT ( ${write(filter[1] as any)} )`;
       case '&&':
       case '||':
         let cqlFilter: string = '';
         const cqlCombinationOperator = combinationOperatorsReverseMap[operator];
         cqlFilter += filter
           .slice(1)
-          .map(f => write(f, true))
+          // TODO this should be better typed, get rid of `f: any`
+          .map((f: any) => write(f, true))
           .join(` ${cqlCombinationOperator} `);
         if (isChild) {
           return `(${cqlFilter})`;
