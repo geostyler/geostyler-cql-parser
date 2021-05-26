@@ -48,6 +48,31 @@ describe('CqlParser', () => {
       expect(got1).toEqual(['==', 'Age', 12]);
       expect(got2).toEqual(['==', 'Height', 1.75]);
     });
+    it('can read Between Comparison Filter', () => {
+      const cqlFilter = 'Persons BETWEEN 1000 AND 2000';
+      const expected = [
+        '&&',
+        ['>=', 'Persons', 1000],
+        ['<=', 'Persons', 2000],
+      ];
+      const got = cqlParser.read(cqlFilter);
+      expect(got).toEqual(expected);
+    });
+    it('can read is null Comparison Filter', () => {
+      const cqlFilter = 'Persons IS NULL';
+      const expected = ['==', 'Persons', null];
+      const got = cqlParser.read(cqlFilter);
+      expect(got).toEqual(expected);
+    });
+    it('can read Negation Filters', () => {
+      const cqlFilter = 'NOT(Name = \'Peter\')';
+      const expected = [
+        '!',
+        ['==', 'Name', 'Peter']
+      ];
+      const got = cqlParser.read(cqlFilter);
+      expect(got).toEqual(expected);
+    });
     it('can read Combination Filters', () => {
       const cqlFilter1 = 'Age = 12 AND Name = Peter';
       const cqlFilter2 = 'Name = "Peter Schmidt" OR Height = 1.75';
@@ -140,33 +165,49 @@ describe('CqlParser', () => {
       expect(cqlParser.write).toBeDefined();
     });
     it('returns undefined for illegal filters', () => {
-      const cqlFilter1 = undefined;
-      const cqlFilter2: Filter = ['=='];
-      const cqlFilter3: Filter = [];
+      const cqlFilter1: Filter = undefined;
+      const cqlFilter2: Filter = ['=='] as any;
+      const cqlFilter3: Filter = [] as any;
+      const cqlFilter4: Filter = [undefined, undefined] as Filter;
       expect(cqlParser.write(cqlFilter1)).toBeUndefined();
       expect(cqlParser.write(cqlFilter2)).toBeUndefined();
       expect(cqlParser.write(cqlFilter3)).toBeUndefined();
+      expect(cqlParser.write(cqlFilter4)).toBeUndefined();
+    });
+    it('throws for unexpected operators', () => {
+      const geoStylerFilter = ['😱', 'Name', 'Peter'] as any;
+      expect(() => {
+        cqlParser.write(geoStylerFilter);
+      }).toThrowError();
+    });
+    it('can write Negation Filters', () => {
+      const geoStylerFilter = [
+        '!',
+        ['==', 'Name', 'Peter']
+      ] as Filter;
+      const got = cqlParser.write(geoStylerFilter);
+      expect(got).toEqual('NOT ( Name = \'Peter\' )');
     });
     it('can write String Comparison Filters', () => {
-      const geoStylerFilter = ['==', 'Name', 'Peter'];
+      const geoStylerFilter: Filter = ['==', 'Name', 'Peter'];
       const got = cqlParser.write(geoStylerFilter);
       expect(got).toEqual('Name = \'Peter\'');
     });
     it('can write Number Comparison Filters', () => {
-      const geoStylerFilter1 = ['==', 'Age', 12];
-      const geoStylerFilter2 = ['==', 'Height', 1.75];
+      const geoStylerFilter1: Filter = ['==', 'Age', 12];
+      const geoStylerFilter2: Filter = ['==', 'Height', 1.75];
       const got1 = cqlParser.write(geoStylerFilter1);
       const got2 = cqlParser.write(geoStylerFilter2);
       expect(got1).toEqual('Age = 12');
       expect(got2).toEqual('Height = 1.75');
     });
     it('can write Combination Filters', () => {
-      const geoStylerFilter1 = [
+      const geoStylerFilter1: Filter = [
         '&&',
         ['==', 'Age', 12],
         ['==', 'Name', 'Peter']
       ];
-      const geoStylerFilter2 =
+      const geoStylerFilter2: Filter =
       [
         '||',
         ['==', 'Name', 'Peter Schmidt'],
@@ -180,7 +221,7 @@ describe('CqlParser', () => {
       expect(got2).toEqual(cqlFilter2);
     });
     it('can write multiple Combination Filters', () => {
-      const geoStylerFilter1 = [
+      const geoStylerFilter1: Filter= [
         '&&',
         ['==', 'Age', 12],
         ['==', 'Name', 'Peter'],
@@ -191,7 +232,7 @@ describe('CqlParser', () => {
       expect(got1).toEqual(cqlFilter1);
     });
     it('can write complex Combination Filters', () => {
-      const geoStylerFilter1 = [
+      const geoStylerFilter1: Filter = [
         '&&', [
           '||',
           ['==', 'Name', 'Peter'],
@@ -199,7 +240,7 @@ describe('CqlParser', () => {
         ],
         ['==', 'Age', 12]
       ];
-      const geoStylerFilter2 = [
+      const geoStylerFilter2: Filter = [
         '&&', [
           '||',
           ['==', 'Age', 13],
@@ -210,7 +251,7 @@ describe('CqlParser', () => {
           ['==', 'Name', 'Hilde']
         ]
       ];
-      const geoStylerFilter3 = [
+      const geoStylerFilter3: Filter = [
         '||', [
           '&&',
           ['==', 'Age', 12],
