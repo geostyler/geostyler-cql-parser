@@ -38,7 +38,7 @@
     "test": "jest --coverage"
   },
   "dependencies": {
-    "geostyler-style": "^2.0.3",
+    "geostyler-style": "^4.0.2",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
