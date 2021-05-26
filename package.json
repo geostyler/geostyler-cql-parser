@@ -28,7 +28,7 @@
   "scripts": {
     "build:browser": "webpack --config browser-build.config.js",
     "build": "tsc -p tsconfig.json && npm run build:browser",
-    "lint": "eslint -c .eslintrc.js --ext ts src/",
+    "lint": "eslint -c .eslintrc.js --ext ts,spec.ts src/",
     "typecheck": "tsc --noEmit --project tsconfig.json",
     "prebuild": "npm run test",
     "prepublishOnly": "npm run build",
