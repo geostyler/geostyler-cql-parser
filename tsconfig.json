@@ -3,6 +3,7 @@
     "baseUrl": ".",
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
+    "inlineSources": true,
     "lib": [
       "dom",
       "es2017"
