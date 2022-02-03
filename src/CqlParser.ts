@@ -101,7 +101,8 @@ export class CqlParser {
     '<=': '<=',
     '>': '>',
     '>=': '>=',
-    'LIKE': '*='
+    'LIKE': '*=',
+    'BETWEEN': '<=x<='
   };
 
   operatorReverseMap: OperatorsReverseMap = {};
@@ -289,9 +290,10 @@ export class CqlParser {
             min = buildTree();
             property = buildTree();
             return [
-              '&&',
-              ['>=', property, min],
-              ['<=', property, max]
+              '<=x<=',
+              property,
+              min,
+              max
             ];
           case 'COMPARISON':
             const value = buildTree();
@@ -386,6 +388,8 @@ export class CqlParser {
           value = `'${value}'`;
         }
         return `${filter[1]} ${cqlOperator} ${value}`;
+      case '<=x<=':
+        return `${filter[1]} ${cqlOperator} ${filter[2]} AND ${filter[3]}`;
       case undefined:
         break;
       default:
