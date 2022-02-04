@@ -51,9 +51,10 @@ describe('CqlParser', () => {
     it('can read Between Comparison Filter', () => {
       const cqlFilter = 'Persons BETWEEN 1000 AND 2000';
       const expected = [
-        '&&',
-        ['>=', 'Persons', 1000],
-        ['<=', 'Persons', 2000],
+        '<=x<=',
+        'Persons',
+        1000,
+        2000
       ];
       const got = cqlParser.read(cqlFilter);
       expect(got).toEqual(expected);
@@ -271,6 +272,17 @@ describe('CqlParser', () => {
       expect(got1).toEqual(cqlFilter1);
       expect(got2).toEqual(cqlFilter2);
       expect(got3).toEqual(cqlFilter3);
+    });
+    it('can write a between filter', () => {
+      const geoStylerFilter: Filter = [
+        '<=x<=',
+        'Persons',
+        1000,
+        2000
+      ];
+      const cqlFilter = 'Persons BETWEEN 1000 AND 2000';
+      const got = cqlParser.write(geoStylerFilter);
+      expect(got).toEqual(cqlFilter);
     });
   });
 });
