@@ -98,7 +98,10 @@ export class CqlParser {
     }
   }
 
-  write(filter: Filter | Expression | number | string | undefined, isChild?: boolean): string | number | undefined {
+  write(
+    filter: RegExp | Filter | Expression | number | string | undefined,
+    isChild?: boolean
+  ): string | number | undefined {
     const {
       operatorReverseMap,
       combinationOperatorsReverseMap,
