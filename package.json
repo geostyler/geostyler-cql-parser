@@ -54,6 +54,7 @@
     "@types/jest": "^28.1.0",
     "@types/lodash": "^4.14.170",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
+    "acorn": "^8.7.1",
     "babel-jest": "^27.0.1",
     "coveralls": "^3.1.0",
     "eslint": "^7.27.0",
