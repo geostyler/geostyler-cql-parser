@@ -34,7 +34,7 @@
     "prebuild": "npm run generate && npm run test",
     "prepublishOnly": "npm run build",
     "pretest": "npm run generate && npm run lint && npm run typecheck",
-    "release": "np --no-yarn && git push https://github.com/geostyler/geostyler-cql-parser.git master --tags",
+    "release": "np --no-yarn --any-branch && git push https://github.com/geostyler/geostyler-cql-parser.git master --tags",
     "start": "webpack --config webpack.config.js --watch",
     "test:watch": "jest --watchAll",
     "test": "jest --coverage"
