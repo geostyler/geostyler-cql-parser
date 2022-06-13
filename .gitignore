@@ -18,3 +18,5 @@
 .env.production.local
 
 npm-debug.log*
+
+cql-parser.js
