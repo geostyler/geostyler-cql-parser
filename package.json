@@ -1,6 +1,6 @@
 {
   "name": "geostyler-cql-parser",
-  "version": "1.1.0",
+  "version": "2.0.0-beta.0",
   "description": "Translates CQL Filters and Geostyler Style Filters",
   "main": "build/dist/CqlParser.js",
   "types": "build/dist/CqlParser.d.ts",
@@ -26,20 +26,21 @@
   },
   "homepage": "https://github.com/geostyler/geostyler-cql-parser#readme",
   "scripts": {
+    "generate": "jison -m commonjs ./src/cql.jison -o ./src/cql-parser.js",
     "build:browser": "webpack --config browser-build.config.js",
     "build": "tsc -p tsconfig.json && npm run build:browser",
     "lint": "eslint -c .eslintrc.js --ext ts,spec.ts src/",
     "typecheck": "tsc --noEmit --project tsconfig.json",
     "prebuild": "npm run test",
     "prepublishOnly": "npm run build",
-    "pretest": "npm run lint && npm run typecheck",
-    "release": "np --no-yarn && git push https://github.com/geostyler/geostyler-cql-parser.git master --tags",
+    "pretest": "npm run generate && npm run lint && npm run typecheck",
+    "release": "np --no-yarn --any-branch && git push https://github.com/geostyler/geostyler-cql-parser.git master --tags",
     "start": "webpack --config webpack.config.js --watch",
     "test:watch": "jest --watchAll",
     "test": "jest --coverage"
   },
   "dependencies": {
-    "geostyler-style": "^5.0.1",
+    "geostyler-style": "^6.0.0",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
@@ -53,15 +54,22 @@
     "@types/jest": "^28.1.0",
     "@types/lodash": "^4.14.170",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
+    "acorn": "^8.7.1",
     "babel-jest": "^27.0.1",
+    "buffer": "^6.0.3",
+    "buffer-browserify": "^0.2.5",
     "coveralls": "^3.1.0",
     "eslint": "^7.27.0",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "graceful-js": "^1.0.0",
     "jest": "^28.1.0",
+    "jison": "^0.4.18",
     "np": "^7.5.0",
+    "path": "^0.12.7",
+    "stream-browserify": "^3.0.0",
     "terser-webpack-plugin": "^5.1.2",
-    "ts-loader": "^9.2.2",
-    "typescript": "^4.2.4",
+    "ts-loader": "^9.3.0",
+    "typescript": "^4.7.3",
     "webpack": "^5.37.1",
     "webpack-cli": "^4.7.0"
   }

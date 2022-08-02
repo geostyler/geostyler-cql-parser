@@ -1,20 +1,28 @@
 const TerserPlugin = require('terser-webpack-plugin');
-require("@babel/polyfill");
+require('@babel/polyfill');
 
 module.exports = {
   entry: [
-    "@babel/polyfill",
-    "./src/CqlParser.ts"
+    '@babel/polyfill',
+    './src/CqlParser.ts'
   ],
   mode: 'production',
   output: {
-    filename: "CqlParser.js",
-    path: __dirname + "/browser",
-    library: "CqlParser"
+    filename: 'CqlParser.js',
+    path: __dirname + '/browser',
+    library: 'CqlParser'
   },
   resolve: {
-    // Add '.ts' as resolvable extensions.
-    extensions: [".ts", ".js", ".json"]
+    extensions: ['.ts', '.js', '.json'],
+    fallback: {
+      assert: false,
+      constants: false,
+      stream: require.resolve('stream-browserify'),
+      buffer: require.resolve('buffer')
+    },
+    alias: {
+      fs: require.resolve('graceful-fs')
+    }
   },
   optimization: {
     minimizer: [
