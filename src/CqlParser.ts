@@ -40,6 +40,36 @@ type PrecedenceMap = {
 
 export class CqlParser {
 
+  tokens: PatternName[] = [
+    'PROPERTY', 'COMPARISON', 'VALUE', 'LOGICAL'
+  ];
+
+  operatorsMap: OperatorsMap = {
+    '=': '==',
+    '<>': '!=',
+    '<': '<',
+    '<=': '<=',
+    '>': '>',
+    '>=': '>=',
+    'LIKE': '*=',
+    'BETWEEN': '<=x<='
+  };
+
+  operatorReverseMap: OperatorsReverseMap = {};
+
+  combinationOperatorsMap: CombinationOperatorsMap = {
+    'AND': '&&',
+    'OR': '||'
+  };
+
+  combinationOperatorsReverseMap: CombinationOperatorsReverseMap = {};
+
+  precedence: PrecedenceMap = {
+    'RPAREN': 3,
+    'LOGICAL': 2,
+    'COMPARISON': 1
+  };
+
   constructor() {
     const {
       combinationOperatorsMap,
@@ -147,36 +177,6 @@ export class CqlParser {
 
     return filter;
   }
-
-  tokens: PatternName[] = [
-    'PROPERTY', 'COMPARISON', 'VALUE', 'LOGICAL'
-  ];
-
-  operatorsMap: OperatorsMap = {
-    '=': '==',
-    '<>': '!=',
-    '<': '<',
-    '<=': '<=',
-    '>': '>',
-    '>=': '>=',
-    'LIKE': '*=',
-    'BETWEEN': '<=x<='
-  };
-
-  operatorReverseMap: OperatorsReverseMap = {};
-
-  combinationOperatorsMap: CombinationOperatorsMap = {
-    'AND': '&&',
-    'OR': '||'
-  };
-
-  combinationOperatorsReverseMap: CombinationOperatorsReverseMap = {};
-
-  precedence: PrecedenceMap = {
-    'RPAREN': 3,
-    'LOGICAL': 2,
-    'COMPARISON': 1
-  };
 
 }
 
