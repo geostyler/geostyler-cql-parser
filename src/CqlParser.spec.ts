@@ -1,5 +1,5 @@
 import { CqlParser } from './CqlParser';
-import { Filter } from 'geostyler-style';
+import { Filter, GeoStylerFunction } from 'geostyler-style';
 import Parser from './cql-parser';
 
 describe('CqlParser', () => {
@@ -31,50 +31,31 @@ describe('CqlParser', () => {
     it('can read number Comparison Filters', () => {
       const cqlFilter = 'Age = 12.3';
       const got = cqlParser.read(cqlFilter);
-      expect(got).toEqual(['==', 'Age', {
-        type: 'literal',
-        value: 12.3
-      }]);
+      expect(got).toEqual(['==', 'Age', 12.3]);
     });
     it('can read Strings with quotation marks Comparison Filters', () => {
       const cqlFilter1 = 'Name = "Peter"';
       const cqlFilter2 = 'Name = \'Peter\'';
       const got1 = cqlParser.read(cqlFilter1);
       const got2 = cqlParser.read(cqlFilter2);
-      expect(got1).toEqual(['==', 'Name', {
-        type: 'literal',
-        value: 'Peter'
-      }]);
-      expect(got2).toEqual(['==', 'Name', {
-        type: 'literal',
-        value: 'Peter'
-      }]);
+      expect(got1).toEqual(['==', 'Name', 'Peter']);
+      expect(got2).toEqual(['==', 'Name', 'Peter']);
     });
     it('can read Number Comparison Filters', () => {
       const cqlFilter1 = 'Age = 12';
       const cqlFilter2 = 'Height = 1.75';
       const got1 = cqlParser.read(cqlFilter1);
       const got2 = cqlParser.read(cqlFilter2);
-      expect(got1).toEqual(['==', 'Age', {
-        type: 'literal',
-        value: 12
-      }]);
-      expect(got2).toEqual(['==', 'Height', {
-        type: 'literal',
-        value: 1.75
-      }]);
+      expect(got1).toEqual(['==', 'Age', 12]);
+      expect(got2).toEqual(['==', 'Height', 1.75]);
     });
     it('can read Between Comparison Filter', () => {
       const cqlFilter = 'Persons BETWEEN 1000 AND 2000';
       const expected = [
         '<=x<=',
-        'Persons', {
-          type: 'literal',
-          value: 1000
-        }, {
-          type: 'literal',
-          value: 2000
-        }
+        'Persons',
+        1000,
+        2000
       ];
       const got = cqlParser.read(cqlFilter);
       expect(got).toEqual(expected);
@@ -89,10 +70,7 @@ describe('CqlParser', () => {
       const cqlFilter = 'NOT(Name = \'Peter\')';
       const expected = [
         '!',
-        ['==', 'Name', {
-          type: 'literal',
-          value: 'Peter'
-        }]
+        ['==', 'Name', 'Peter']
       ];
       const got = cqlParser.read(cqlFilter);
       expect(got).toEqual(expected);
@@ -105,24 +83,15 @@ describe('CqlParser', () => {
       expect(got1).toEqual(
         [
           '&&',
-          ['==', 'Age', {
-            type: 'literal',
-            value: 12
-          }],
+          ['==', 'Age', 12],
           ['==', 'Name', 'Peter']
         ]
       );
       expect(got2).toEqual(
         [
           '||',
-          ['==', 'Name', {
-            type: 'literal',
-            value: 'Peter Schmidt'
-          }],
-          ['==', 'Height', {
-            type: 'literal',
-            value: 1.75
-          }]
+          ['==', 'Name', 'Peter Schmidt'],
+          ['==', 'Height', 1.75]
         ]
       );
     });
@@ -134,24 +103,15 @@ describe('CqlParser', () => {
       expect(got1).toEqual(
         [
           '&&',
-          ['==', 'Age', {
-            type: 'literal',
-            value: 12
-          }],
+          ['==', 'Age', 12],
           ['==', 'Name', 'Peter']
         ]
       );
       expect(got2).toEqual(
         [
           '||',
-          ['==', 'Name', {
-            type: 'literal',
-            value: 'Peter Schmidt'
-          }],
-          ['==', 'Height', {
-            type: 'literal',
-            value: 1.75
-          }]
+          ['==', 'Name', 'Peter Schmidt'],
+          ['==', 'Height', 1.75]
         ]
       );
     });
@@ -169,27 +129,18 @@ describe('CqlParser', () => {
             ['==', 'Name', 'Peter'],
             ['==', 'Name', 'Hilde']
           ],
-          ['==', 'Age', {
-            type: 'literal',
-            value: 12
-          }]
+          ['==', 'Age', 12]
         ]
       );
       expect(got2).toEqual(
         [
           '&&', [
             '||',
-            ['==', 'Age', {
-              type: 'literal',
-              value: 13
-            }],
+            ['==', 'Age', 13],
             ['==', 'Name', 'Peter']
           ], [
             '||',
-            ['==', 'Age', {
-              type: 'literal',
-              value: 13
-            }],
+            ['==', 'Age', 13],
             ['==', 'Name', 'Hilde']
           ]
         ]
@@ -198,17 +149,11 @@ describe('CqlParser', () => {
         [
           '||', [
             '&&',
-            ['==', 'Age', {
-              type: 'literal',
-              value: 12
-            }],
+            ['==', 'Age', 12],
             ['==', 'Name', 'Peter']
           ], [
             '&&',
-            ['==', 'Age', {
-              type: 'literal',
-              value: 12
-            }],
+            ['==', 'Age', 12],
             ['==', 'Name', 'Hilde']
           ]
         ]
@@ -222,14 +167,12 @@ describe('CqlParser', () => {
       expect(cqlParser.write).toBeDefined();
     });
     it('returns undefined for illegal filters', () => {
-      const cqlFilter1: Filter = undefined;
+      const cqlFilter1 = undefined;
       const cqlFilter2: Filter = ['=='] as any;
       const cqlFilter3: Filter = [] as any;
-      const cqlFilter4: Filter = [undefined, undefined] as Filter;
       expect(cqlParser.write(cqlFilter1)).toBeUndefined();
       expect(cqlParser.write(cqlFilter2)).toBeUndefined();
       expect(cqlParser.write(cqlFilter3)).toBeUndefined();
-      expect(cqlParser.write(cqlFilter4)).toBeUndefined();
     });
     it('throws for unexpected operators', () => {
       const geoStylerFilter = ['😱', 'Name', 'Peter'] as any;
@@ -333,32 +276,19 @@ describe('CqlParser', () => {
       const geoStylerFilter: Filter = [
         '<=x<=',
         'Persons',
-        {
-          type: 'literal',
-          value: 1000
-        }, {
-          type: 'literal',
-          value: 2000
-        }
+        1000,
+        2000
       ];
       const cqlFilter = 'Persons BETWEEN 1000 AND 2000';
       const got = cqlParser.write(geoStylerFilter);
       expect(got).toEqual(cqlFilter);
     });
     it('can write complex Combination Filters', () => {
-      const geoStylerFilter = {
-        type: 'functioncall',
-        name: 'funcCall',
-        args: [{
-          type: 'literal',
-          value: 1
-        }, {
-          type: 'literal',
-          value: 2
-        }]
+      const geoStylerFilter: GeoStylerFunction = {
+        name: 'max',
+        args: [1, 2]
       };
-      const cqlFilter = 'funcCall(1, 2)';
-      const got1 = Parser.parse(cqlFilter);
+      const cqlFilter = 'max(1, 2)';
       const got2 = cqlParser.write(geoStylerFilter as any);
       expect(got2).toEqual(cqlFilter);
     });

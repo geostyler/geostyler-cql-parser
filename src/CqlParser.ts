@@ -2,7 +2,11 @@ import {
   CombinationOperator,
   Operator,
   Filter,
-  Expression
+  Expression,
+  PropertyType,
+  isGeoStylerFunction,
+  isFilter,
+  isOperator
 } from 'geostyler-style';
 
 import {
@@ -36,111 +40,6 @@ type PrecedenceMap = {
 
 export class CqlParser {
 
-  constructor() {
-    const {
-      combinationOperatorsMap,
-      combinationOperatorsReverseMap,
-      operatorsMap,
-      operatorReverseMap
-    } = this;
-
-    Object.keys(operatorsMap)
-      .forEach((operator: CqlOperator) => {
-        const value = operatorsMap[operator];
-        operatorReverseMap[value] = operator;
-      });
-
-    Object.keys(combinationOperatorsMap)
-      .forEach((combinationOperator: 'AND' | 'OR') => {
-        const value: CombinationOperator = combinationOperatorsMap[combinationOperator];
-        combinationOperatorsReverseMap[value] = combinationOperator;
-      });
-
-    this.read = this.read.bind(this);
-    this.write = this.write.bind(this);
-  }
-
-  read(text: string | undefined): Filter | Expression | undefined {
-    try {
-      return Parser.parse(text);
-    } catch (e) {
-      return undefined;
-    }
-  }
-
-  write(
-    filter: RegExp | Filter | Expression | number | string | undefined,
-    isChild?: boolean
-  ): string | number | boolean | undefined | null {
-    const {
-      operatorReverseMap,
-      combinationOperatorsReverseMap,
-      write
-    } = this;
-
-    if (filter && (filter as Expression).type) {
-      var expr = filter as Expression;
-      switch (expr.type) {
-        case 'literal':
-          return expr.value;
-        case 'property':
-          return expr.name;
-        case 'functioncall':
-          const args = expr.args.map(a => this.write(a)).join(', ');
-          return `${expr.name}(${args})`;
-        default:
-          return '';
-      }
-    }
-
-    if (!Array.isArray(filter) || filter.length < 2) {
-      return undefined;
-    }
-
-    const operator = filter[0];
-    const cqlOperator = operatorReverseMap[operator];
-
-    switch (operator) {
-      case '!':
-        // TODO this should be better typed, get rid of `as any`
-        return `NOT ( ${write(filter[1] as any)} )`;
-      case '&&':
-      case '||':
-        let cqlFilter: string = '';
-        const cqlCombinationOperator = combinationOperatorsReverseMap[operator];
-        cqlFilter += filter
-          .slice(1)
-          // TODO this should be better typed, get rid of `f: any`
-          .map((f: any) => write(f, true))
-          .join(` ${cqlCombinationOperator} `);
-        if (isChild) {
-          return `(${cqlFilter})`;
-        } else {
-          return cqlFilter;
-        }
-      case '==':
-      case '*=':
-      case '!=':
-      case '<':
-      case '<=':
-      case '>':
-      case '>=':
-        const valueIsString = _isString(filter[2]);
-        let value = filter[2];
-        if (valueIsString) {
-          value = `'${value}'`;
-        }
-        return `${filter[1]} ${cqlOperator} ${value}`;
-      case '<=x<=':
-        return `${filter[1]} ${cqlOperator} ${this.write(filter[2])} AND ${this.write(filter[3])}`;
-      case undefined:
-        break;
-      default:
-        throw new Error(`Can't encode: ${filter}`);
-    }
-    return;
-  }
-
   tokens: PatternName[] = [
     'PROPERTY', 'COMPARISON', 'VALUE', 'LOGICAL'
   ];
@@ -170,6 +69,114 @@ export class CqlParser {
     'LOGICAL': 2,
     'COMPARISON': 1
   };
+
+  constructor() {
+    const {
+      combinationOperatorsMap,
+      combinationOperatorsReverseMap,
+      operatorsMap,
+      operatorReverseMap
+    } = this;
+
+    Object.keys(operatorsMap)
+      .forEach((operator: CqlOperator) => {
+        const value = operatorsMap[operator];
+        operatorReverseMap[value] = operator;
+      });
+
+    Object.keys(combinationOperatorsMap)
+      .forEach((combinationOperator: 'AND' | 'OR') => {
+        const value: CombinationOperator = combinationOperatorsMap[combinationOperator];
+        combinationOperatorsReverseMap[value] = combinationOperator;
+      });
+
+    this.read = this.read.bind(this);
+    this.write = this.write.bind(this);
+  }
+
+  read(text: string | undefined): Filter | Expression<PropertyType> | undefined {
+    try {
+      return Parser.parse(text);
+    } catch (e) {
+      return undefined;
+    }
+  }
+
+  write(
+    filter: RegExp | Filter | Expression<PropertyType>,
+    isChild?: boolean
+  ): PropertyType {
+    const {
+      operatorReverseMap,
+      combinationOperatorsReverseMap,
+      write
+    } = this;
+
+    if (filter && isGeoStylerFunction(filter)) {
+      if (filter.name === 'pi' || filter.name === 'random') {
+        return filter.name;
+      } else {
+        const args = filter.args.map(a => this.write(a)).join(', ');
+        return `${filter.name}(${args})`;
+      }
+    }
+
+    // catch illegal filters
+    if (Array.isArray(filter)) {
+      if (filter.length < 2) {
+        return undefined;
+      }
+      if (!isOperator(filter[0])) {
+        throw new Error(`Can't encode: ${filter}`);
+      }
+    }
+
+    if (isFilter(filter)) {
+      const operator = filter[0];
+      const cqlOperator = operatorReverseMap[operator];
+
+      switch (operator) {
+        case '!':
+          // TODO this should be better typed, get rid of `as any`
+          return `NOT ( ${write(filter[1] as any)} )`;
+        case '&&':
+        case '||':
+          let cqlFilter: string = '';
+          const cqlCombinationOperator = combinationOperatorsReverseMap[operator];
+          cqlFilter += filter
+            .slice(1)
+            // TODO this should be better typed, get rid of `f: any`
+            .map((f: any) => write(f, true))
+            .join(` ${cqlCombinationOperator} `);
+          if (isChild) {
+            return `(${cqlFilter})`;
+          } else {
+            return cqlFilter;
+          }
+        case '==':
+        case '*=':
+        case '!=':
+        case '<':
+        case '<=':
+        case '>':
+        case '>=':
+          const valueIsString = _isString(filter[2]);
+          let value = filter[2];
+          if (valueIsString) {
+            value = `'${value}'`;
+          }
+          return `${filter[1]} ${cqlOperator} ${value}`;
+        case '<=x<=':
+          return `${filter[1]} ${cqlOperator} ${this.write(filter[2])} AND ${this.write(filter[3])}`;
+        case undefined:
+          break;
+        default:
+          break;
+      }
+    }
+
+    return filter;
+  }
 
 }
 
