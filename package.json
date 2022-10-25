@@ -28,10 +28,10 @@
   "scripts": {
     "generate": "jison -m commonjs ./src/cql.jison -o ./src/cql-parser.js",
     "build:browser": "webpack --config browser-build.config.js",
-    "build": "tsc -p tsconfig.json && npm run build:browser",
+    "build": "tsc -p tsconfig.json && npm run build:browser && cp ./src/cql-parser.js ./build/dist",
     "lint": "eslint -c .eslintrc.js --ext ts,spec.ts src/",
     "typecheck": "tsc --noEmit --project tsconfig.json",
-    "prebuild": "npm run test",
+    "prebuild": "npm run test && npm run generate",
     "prepublishOnly": "npm run build",
     "pretest": "npm run generate && npm run lint && npm run typecheck",
     "release": "np --no-yarn --any-branch && git push https://github.com/geostyler/geostyler-cql-parser.git master --tags",
