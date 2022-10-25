@@ -1,6 +1,6 @@
 {
   "name": "geostyler-cql-parser",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Translates CQL Filters and Geostyler Style Filters",
   "main": "build/dist/CqlParser.js",
   "types": "build/dist/CqlParser.d.ts",
