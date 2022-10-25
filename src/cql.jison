@@ -181,25 +181,25 @@ semicolonOpt
 string
   : STRING {
       if ($1.startsWith('\'') || $1.startsWith('"')) {
-          $$ = { type: 'literal', value: $1.substring(1, $1.length - 1) }
+          $$ = $1.substring(1, $1.length - 1)
       } else {
-          $$ = { type: 'literal', value: $1 }
+          $$ = $1
       }
     }
   ;
 
 number
-  : NUMERIC { $$ = { type: 'literal', value: parseFloat($1) } }
-  | EXPONENT_NUMERIC = { $$ = { type: 'literal', value: parseFloat($1) } }
+  : NUMERIC { $$ = Number($1) }
+  | EXPONENT_NUMERIC = { $$ = Number($1) }
   ;
 
 boolean
-  : TRUE { $$ = { type: 'literal', value: true } }
-  | FALSE { $$ = { type: 'literal', value: false } }
+  : TRUE { $$ = true }
+  | FALSE { $$ = false }
   ;
 
 null
-  : NULL { $$ = { type: 'Null', value: 'null' } }
+  : NULL { $$ = null }
   ;
 
 literal
@@ -211,7 +211,7 @@ literal
   ;
 
 function_call
-  : IDENTIFIER '(' function_call_param_list ')' { $$ = {type: 'functioncall', name: $1, args: $3} }
+  : IDENTIFIER '(' function_call_param_list ')' { $$ = { name: $1, args: $3} }
   ;
 
 function_call_param_list
