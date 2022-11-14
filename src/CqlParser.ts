@@ -51,23 +51,23 @@ export class CqlParser {
     '<=': '<=',
     '>': '>',
     '>=': '>=',
-    'LIKE': '*=',
-    'BETWEEN': '<=x<='
+    LIKE: '*=',
+    BETWEEN: '<=x<='
   };
 
   operatorReverseMap: OperatorsReverseMap = {};
 
   combinationOperatorsMap: CombinationOperatorsMap = {
-    'AND': '&&',
-    'OR': '||'
+    AND: '&&',
+    OR: '||'
   };
 
   combinationOperatorsReverseMap: CombinationOperatorsReverseMap = {};
 
   precedence: PrecedenceMap = {
-    'RPAREN': 3,
-    'LOGICAL': 2,
-    'COMPARISON': 1
+    RPAREN: 3,
+    LOGICAL: 2,
+    COMPARISON: 1
   };
 
   constructor() {
