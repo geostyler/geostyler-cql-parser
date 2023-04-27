@@ -31,9 +31,6 @@ jobs:
     - name: Install dependencies ⏬
       run: npm install
 
-    - name: Generate parser 🧑‍💻
-      run: npm run generate
-
     - name: Test code ✅
       run: npm run test
 
