@@ -132,21 +132,22 @@ export class CqlParser {
     }
 
     if (isFilter(filter)) {
-      const operator = filter[0];
+      const f = filter as string[];
+      const operator = f[0];
       const cqlOperator = operatorReverseMap[operator];
 
       switch (operator) {
         case '!':
           // TODO this should be better typed, get rid of `as any`
-          return `NOT ( ${write(filter[1] as any)} )`;
+          return `NOT ( ${write(f[1] as any)} )`;
         case '&&':
         case '||':
           let cqlFilter: string = '';
           const cqlCombinationOperator = combinationOperatorsReverseMap[operator];
-          cqlFilter += filter
+          cqlFilter += f
             .slice(1)
             // TODO this should be better typed, get rid of `f: any`
-            .map((f: any) => write(f, true))
+            .map((part) => write(part, true))
             .join(` ${cqlCombinationOperator} `);
           if (isChild) {
             return `(${cqlFilter})`;
@@ -160,14 +161,14 @@ export class CqlParser {
         case '<=':
         case '>':
         case '>=':
-          const valueIsString = _isString(filter[2]);
-          let value = filter[2];
+          const valueIsString = _isString(f[2]);
+          let value = f[2];
           if (valueIsString) {
             value = `'${value}'`;
           }
-          return `${filter[1]} ${cqlOperator} ${value}`;
+          return `${f[1]} ${cqlOperator} ${value}`;
         case '<=x<=':
-          return `${filter[1]} ${cqlOperator} ${this.write(filter[2])} AND ${this.write(filter[3])}`;
+          return `${f[1]} ${cqlOperator} ${this.write(f[2])} AND ${this.write(f[3])}`;
         case undefined:
           break;
         default:
