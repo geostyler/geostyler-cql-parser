@@ -19,7 +19,6 @@
     "rootDir": "src",
     "sourceMap": true,
     "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
     "target": "es5"
   },
   "exclude": [
