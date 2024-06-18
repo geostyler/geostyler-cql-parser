@@ -7,19 +7,19 @@
     "inlineSources": true,
     "lib": [
       "dom",
-      "es2017"
+      "ES2022"
     ],
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
-    "outDir": "build/dist",
+    "outDir": "dist",
     "rootDir": "src",
     "sourceMap": true,
     "strictNullChecks": true,
-    "target": "es5"
+    "target": "ES2022"
   },
   "exclude": [
     "node_modules",
@@ -33,6 +33,6 @@
     "data",
     "coverage",
     "browser",
-    "webpack**.config.js"
+    "vite.config.ts"
   ]
 }
