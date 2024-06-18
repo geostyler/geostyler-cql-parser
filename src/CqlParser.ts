@@ -1,13 +1,8 @@
 import {
-  CombinationOperator,
-  Operator,
-  Filter,
-  Expression,
-  PropertyType,
   isGeoStylerFunction,
   isFilter,
   isOperator
-} from 'geostyler-style';
+} from 'geostyler-style/dist/typeguards';
 
 import {
   isString as _isString,
@@ -17,6 +12,7 @@ import {
 
 // @ts-ignore:next-line
 import * as Parser from './cql-parser';
+import { CombinationOperator, Expression, Filter, Operator, PropertyType } from 'geostyler-style/dist/style';
 
 type PatternName = 'PROPERTY' | 'COMPARISON' | 'VALUE' | 'LOGICAL' | 'LPAREN' | 'RPAREN'
   | 'SPATIAL' | 'NOT' | 'BETWEEN' | 'GEOMETRY' | 'END' | 'COMMA' | 'IS_NULL';

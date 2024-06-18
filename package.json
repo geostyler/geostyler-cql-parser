@@ -41,7 +41,7 @@
     "test": "vitest run --coverage"
   },
   "dependencies": {
-    "geostyler-style": "^8.1.0",
+    "geostyler-style": "9.0.0-next.1",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
