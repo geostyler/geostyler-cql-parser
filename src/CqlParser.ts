@@ -16,7 +16,7 @@ import {
 } from 'lodash';
 
 // @ts-ignore:next-line
-import Parser from './cql-parser';
+import * as Parser from './cql-parser';
 
 type PatternName = 'PROPERTY' | 'COMPARISON' | 'VALUE' | 'LOGICAL' | 'LPAREN' | 'RPAREN'
   | 'SPATIAL' | 'NOT' | 'BETWEEN' | 'GEOMETRY' | 'END' | 'COMMA' | 'IS_NULL';
