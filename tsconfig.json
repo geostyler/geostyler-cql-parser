@@ -23,7 +23,7 @@
   },
   "exclude": [
     "node_modules",
-    "build",
+    "dist",
     "scripts",
     "acceptance-tests",
     "webpack",
@@ -33,6 +33,7 @@
     "data",
     "coverage",
     "browser",
-    "vite.config.ts"
+    "vite.config.ts",
+    "vitest.config.ts"
   ]
 }

@@ -1,6 +1,5 @@
 import { CqlParser } from './CqlParser';
 import { Filter, GeoStylerFunction } from 'geostyler-style';
-import Parser from './cql-parser';
 
 describe('CqlParser', () => {
   let cqlParser: CqlParser;
