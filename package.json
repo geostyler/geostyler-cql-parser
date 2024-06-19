@@ -4,6 +4,7 @@
   "description": "Translates CQL Filters and Geostyler Style Filters",
   "type": "module",
   "main": "dist/CqlParser.js",
+  "module": "dist/CqlParser.js",
   "types": "dist/CqlParser.d.ts",
   "browser": "dist/geostyler-cql-parser.iife.js",
   "files": [
@@ -41,7 +42,7 @@
     "test": "vitest run --coverage"
   },
   "dependencies": {
-    "geostyler-style": "9.0.0-next.1",
+    "geostyler-style": "9.0.0-next.4",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
@@ -73,6 +74,10 @@
     "vite": "^5.3.1",
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^1.6.0"
+  },
+  "engines": {
+    "node": ">=20.6.0",
+    "npm": ">=10.0.0"
   },
   "funding": "https://opencollective.com/geostyler"
 }
