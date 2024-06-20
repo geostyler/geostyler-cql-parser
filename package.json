@@ -38,8 +38,7 @@
     "test": "vitest run --coverage"
   },
   "dependencies": {
-    "geostyler-style": "9.0.0-next.5",
-    "lodash": "^4.17.21"
+    "geostyler-style": "9.0.0-next.5"
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",
