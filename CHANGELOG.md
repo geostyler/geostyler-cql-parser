@@ -1,3 +1,10 @@
+## [4.0.0-beta.3](https://github.com/geostyler/geostyler-cql-parser/compare/v4.0.0-beta.2...v4.0.0-beta.3) (2024-06-20)
+
+
+### Bug Fixes
+
+* remove obsolete dependency ([bf4f406](https://github.com/geostyler/geostyler-cql-parser/commit/bf4f406227ba2deb198bbd27d2a1075fd17ca987))
+
 ## [4.0.0-beta.2](https://github.com/geostyler/geostyler-cql-parser/compare/v4.0.0-beta.1...v4.0.0-beta.2) (2024-06-20)
 
 
