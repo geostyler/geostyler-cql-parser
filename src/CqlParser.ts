@@ -10,8 +10,8 @@ import {
   isNaN as _isNaN
 } from 'lodash';
 
-// @ts-ignore:next-line
-import * as Parser from './cql-parser';
+import './cql-parser.cjs';
+
 import { CombinationOperator, Expression, Filter, Operator, PropertyType } from 'geostyler-style/dist/style';
 
 type PatternName = 'PROPERTY' | 'COMPARISON' | 'VALUE' | 'LOGICAL' | 'LPAREN' | 'RPAREN'
@@ -92,7 +92,8 @@ export class CqlParser {
 
   read(text: string | undefined): Filter | Expression<PropertyType> | undefined {
     try {
-      return Parser.parse(text);
+      // @ts-expect-error
+      return cqlParser.parse(text);
     } catch (e) {
       return undefined;
     }

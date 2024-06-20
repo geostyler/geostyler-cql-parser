@@ -6,7 +6,6 @@
   "main": "dist/CqlParser.js",
   "module": "dist/CqlParser.js",
   "types": "dist/CqlParser.d.ts",
-  "browser": "dist/geostyler-cql-parser.iife.js",
   "files": [
     "dist",
     "index.d.ts"
@@ -28,9 +27,8 @@
   },
   "homepage": "https://github.com/geostyler/geostyler-cql-parser#readme",
   "scripts": {
-    "generate": "jison -m commonjs ./src/cql.jison -o ./src/cql-parser.cjs",
-    "build:browser": "vite build",
-    "build": "npm run build:browser && tsc && cp ./src/cql-parser.js ./dist",
+    "generate": "jison -m js ./src/cql.jison -o ./src/cql-parser.cjs && sed -i 's;var cqlParser;window.cqlParser;g' ./src/cql-parser.cjs",
+    "build": "tsc && cp ./src/cql-parser.cjs ./dist",
     "lint": "eslint -c .eslintrc.cjs --ext ts,spec.ts src/",
     "typecheck": "tsc --noEmit --project tsconfig.json",
     "prebuild": "npm run test",
