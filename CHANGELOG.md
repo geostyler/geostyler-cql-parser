@@ -1,3 +1,10 @@
+## [4.0.0-beta.2](https://github.com/geostyler/geostyler-cql-parser/compare/v4.0.0-beta.1...v4.0.0-beta.2) (2024-06-20)
+
+
+### Bug Fixes
+
+* update geostyler-style version, cleanup package.json ([a938ae7](https://github.com/geostyler/geostyler-cql-parser/commit/a938ae759a765786ff57976a970a994fa0d68d02))
+
 ## [4.0.0-beta.1](https://github.com/geostyler/geostyler-cql-parser/compare/v3.0.2...v4.0.0-beta.1) (2024-06-20)
 
 
