@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/geostyler/geostyler-cql-parser#readme",
   "scripts": {
-    "generate": "jison -m js ./src/cql.jison -o ./src/cql-parser.cjs && sed -i 's;var cqlParser;(window ? window : global).cqlParser;g' ./src/cql-parser.cjs",
+    "generate": "jison -m js ./src/cql.jison -o ./src/cql-parser.cjs && sed -i 's;var cqlParser;(typeof window !== undefined ? window : global).cqlParser;g' ./src/cql-parser.cjs",
     "build": "tsc && cp ./src/cql-parser.cjs ./dist",
     "lint": "eslint -c .eslintrc.cjs --ext ts,spec.ts src/",
     "typecheck": "tsc --noEmit --project tsconfig.json",
