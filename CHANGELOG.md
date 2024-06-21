@@ -1,3 +1,10 @@
+## [4.0.0-beta.4](https://github.com/geostyler/geostyler-cql-parser/compare/v4.0.0-beta.3...v4.0.0-beta.4) (2024-06-21)
+
+
+### Bug Fixes
+
+* use proper cqlParser object to run properly in all environments ([23e0546](https://github.com/geostyler/geostyler-cql-parser/commit/23e05463e0459ae1b5592603bc7db51166a6f9f0))
+
 ## [4.0.0-beta.3](https://github.com/geostyler/geostyler-cql-parser/compare/v4.0.0-beta.2...v4.0.0-beta.3) (2024-06-20)
 
 
