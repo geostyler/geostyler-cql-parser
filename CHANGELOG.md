@@ -1,3 +1,10 @@
+## [4.0.0-beta.7](https://github.com/geostyler/geostyler-cql-parser/compare/v4.0.0-beta.6...v4.0.0-beta.7) (2024-06-21)
+
+
+### Bug Fixes
+
+* update browsercheck ([d7e0af6](https://github.com/geostyler/geostyler-cql-parser/commit/d7e0af6a7c476f8387a375b9321f2005ad0489cd))
+
 ## [4.0.0-beta.6](https://github.com/geostyler/geostyler-cql-parser/compare/v4.0.0-beta.5...v4.0.0-beta.6) (2024-06-21)
 
 
