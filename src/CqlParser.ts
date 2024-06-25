@@ -1,13 +1,8 @@
 import {
-  CombinationOperator,
-  Operator,
-  Filter,
-  Expression,
-  PropertyType,
   isGeoStylerFunction,
   isFilter,
   isOperator
-} from 'geostyler-style';
+} from 'geostyler-style/dist/typeguards';
 
 import {
   isString as _isString,
@@ -15,8 +10,9 @@ import {
   isNaN as _isNaN
 } from 'lodash';
 
-// @ts-ignore:next-line
-import * as Parser from './cql-parser';
+import './cql-parser.cjs';
+
+import { CombinationOperator, Expression, Filter, Operator, PropertyType } from 'geostyler-style/dist/style';
 
 type PatternName = 'PROPERTY' | 'COMPARISON' | 'VALUE' | 'LOGICAL' | 'LPAREN' | 'RPAREN'
   | 'SPATIAL' | 'NOT' | 'BETWEEN' | 'GEOMETRY' | 'END' | 'COMMA' | 'IS_NULL';
@@ -96,7 +92,8 @@ export class CqlParser {
 
   read(text: string | undefined): Filter | Expression<PropertyType> | undefined {
     try {
-      return Parser.parse(text);
+      // @ts-expect-error defined in the window object
+      return window.cqlParser.parse(text);
     } catch (e) {
       return undefined;
     }

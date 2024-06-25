@@ -71,7 +71,7 @@
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-var cqlParser = (function(){
+(typeof window !== 'undefined' ? window : global).cqlParser = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,29],$V1=[1,30],$V2=[1,31],$V3=[1,32],$V4=[1,33],$V5=[1,34],$V6=[1,21],$V7=[1,22],$V8=[1,13],$V9=[1,28],$Va=[1,23],$Vb=[1,24],$Vc=[1,25],$Vd=[1,26],$Ve=[1,27],$Vf=[1,14],$Vg=[1,15],$Vh=[1,5],$Vi=[1,39],$Vj=[1,36],$Vk=[1,37],$Vl=[1,38],$Vm=[5,24,25,33,34,36,39,50,70,86,87,88],$Vn=[5,24,25,33,34,36,39,50,70,75,76,77,78,79,80,81,83,86,87,88],$Vo=[1,56],$Vp=[1,57],$Vq=[1,52],$Vr=[1,53],$Vs=[1,54],$Vt=[1,55],$Vu=[1,58],$Vv=[1,59],$Vw=[1,60],$Vx=[1,61],$Vy=[1,62],$Vz=[1,63],$VA=[1,64],$VB=[2,57],$VC=[5,24,25,33,34,36,39,41,43,50,52,53,54,55,56,57,58,59,60,61,63,67,69,70,71,72,73,75,76,77,78,79,80,81,83,86,87,88],$VD=[5,24,25,33,34,36,39,41,43,50,52,53,54,55,56,57,58,59,60,61,63,65,67,69,70,71,72,73,75,76,77,78,79,80,81,83,86,87,88],$VE=[1,65],$VF=[2,20],$VG=[9,11,12,14,15,17,19,21,22,38,41,43,44,45,46,48,49],$VH=[1,104],$VI=[24,25],$VJ=[2,18],$VK=[5,24,25,33,34,36,39,50,87,88],$VL=[5,24,25,33,34,36,39,50,52,53,54,55,61,63,67,69,70,71,72,73,75,76,77,78,79,80,81,83,86,87,88],$VM=[5,24,25,33,34,36,39,41,43,50,52,53,54,55,61,63,67,69,70,71,72,73,75,76,77,78,79,80,81,83,86,87,88],$VN=[33,36,39];
 var parser = {trace: function trace () { },
 yy: {},
@@ -1014,10 +1014,3 @@ function Parser () {
 Parser.prototype = parser;parser.Parser = Parser;
 return new Parser;
 })();
-
-
-if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = cqlParser;
-exports.Parser = cqlParser.Parser;
-exports.parse = function () { return cqlParser.parse.apply(cqlParser, arguments); };
-}
