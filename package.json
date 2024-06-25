@@ -34,7 +34,6 @@
     "prebuild": "npm run test",
     "prepublishOnly": "npm run build",
     "pretest": "npm run lint && npm run typecheck",
-    "release": "np --no-yarn --any-branch",
     "start": "vite",
     "test:watch": "vitest",
     "test": "vitest run --coverage"
@@ -70,7 +69,6 @@
     "graceful-js": "^1.0.0",
     "jison": "^0.4.18",
     "jsdom": "^24.1.0",
-    "np": "^10.0.5",
     "path": "^0.12.7",
     "semantic-release": "^24.0.0",
     "typescript": "^5.4.5",
