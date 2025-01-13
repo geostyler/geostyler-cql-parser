@@ -92,8 +92,8 @@ export class CqlParser {
 
   read(text: string | undefined): Filter | Expression<PropertyType> | undefined {
     try {
-      // @ts-expect-error defined in the window object
-      return window.cqlParser.parse(text);
+      // @ts-expect-error cqlParser is defined in the window / global object - see cql-parser.cjs
+      return (typeof window !== 'undefined' ? window : global).cqlParser.parse(text);
     } catch (e) {
       return undefined;
     }
