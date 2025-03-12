@@ -1,3 +1,10 @@
+## [4.0.2](https://github.com/geostyler/geostyler-cql-parser/compare/v4.0.1...v4.0.2) (2025-03-12)
+
+
+### Bug Fixes
+
+* **deps:** update dependency geostyler-style to v10 ([d1301fd](https://github.com/geostyler/geostyler-cql-parser/commit/d1301fd4b64a94a1ee85ee647799f0745f64e054))
+
 ## [4.0.1](https://github.com/geostyler/geostyler-cql-parser/compare/v4.0.0...v4.0.1) (2025-01-13)
 
 
