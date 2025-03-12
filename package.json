@@ -37,7 +37,7 @@
     "test": "vitest run --coverage"
   },
   "dependencies": {
-    "geostyler-style": "^9.0.0"
+    "geostyler-style": "^10.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",
