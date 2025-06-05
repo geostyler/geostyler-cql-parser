@@ -2,7 +2,7 @@ import {
   isGeoStylerFunction,
   isFilter,
   isOperator
-} from 'geostyler-style/dist/typeguards';
+} from 'geostyler-style';
 
 import {
   isString as _isString,
