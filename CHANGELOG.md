@@ -1,3 +1,13 @@
+## [4.1.0](https://github.com/geostyler/geostyler-cql-parser/compare/v4.0.2...v4.1.0) (2025-06-13)
+
+### Features
+
+* update dependencies and switch to bun ([#409](https://github.com/geostyler/geostyler-cql-parser/issues/409)) ([605b5a2](https://github.com/geostyler/geostyler-cql-parser/commit/605b5a23fc54bbb9162ad03f057256ec563bc65c))
+
+### Bug Fixes
+
+* update geostyler-style imports ([2715e92](https://github.com/geostyler/geostyler-cql-parser/commit/2715e929a35e4192ec14c713896b1182d47217a7))
+
 ## [4.0.2](https://github.com/geostyler/geostyler-cql-parser/compare/v4.0.1...v4.0.2) (2025-03-12)
 
 
