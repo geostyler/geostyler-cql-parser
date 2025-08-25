@@ -28,7 +28,7 @@ type PrecedenceMap = {
   [name: string]: 1 | 2 | 3;
 };
 
-const _isString = (value) => typeof value === 'string';
+const isString = (value: any) => typeof value === 'string';
 
 export class CqlParser {
 
@@ -154,7 +154,7 @@ export class CqlParser {
         case '<=':
         case '>':
         case '>=':
-          const valueIsString = _isString(f[2]);
+          const valueIsString = isString(f[2]);
           let value = f[2];
           if (valueIsString) {
             value = `'${value}'`;
