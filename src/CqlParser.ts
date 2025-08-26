@@ -6,7 +6,7 @@ import {
 
 import './cql-parser.cjs';
 
-import { CombinationOperator, Expression, Filter, Operator, PropertyType } from 'geostyler-style/dist/style';
+import { CombinationOperator, Expression, Filter, Operator, PropertyType } from 'geostyler-style';
 
 type PatternName = 'PROPERTY' | 'COMPARISON' | 'VALUE' | 'LOGICAL' | 'LPAREN' | 'RPAREN'
   | 'SPATIAL' | 'NOT' | 'BETWEEN' | 'GEOMETRY' | 'END' | 'COMMA' | 'IS_NULL';
