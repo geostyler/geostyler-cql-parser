@@ -10,7 +10,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/geostyler/geostyler-cql-parser.git"
+    "url": "git+https://github.com/edwin-speer/geostyler-cql-parser.git"
   },
   "keywords": [
     "geostyler",
