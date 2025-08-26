@@ -1,3 +1,9 @@
+## [4.1.1](https://github.com/geostyler/geostyler-cql-parser/compare/v4.1.0...v4.1.1) (2025-08-26)
+
+### Bug Fixes
+
+* remove lodash and define isString locally ([#442](https://github.com/geostyler/geostyler-cql-parser/issues/442)) ([df1246f](https://github.com/geostyler/geostyler-cql-parser/commit/df1246f35f9fd038b4dd27b5741f7249f44ac498))
+
 ## [4.1.0](https://github.com/geostyler/geostyler-cql-parser/compare/v4.0.2...v4.1.0) (2025-06-13)
 
 ### Features
