@@ -4,12 +4,6 @@ import {
   isOperator
 } from 'geostyler-style';
 
-import {
-  isString as _isString,
-  isNumber as _isNumber,
-  isNaN as _isNaN
-} from 'lodash';
-
 import './cql-parser.cjs';
 
 import { CombinationOperator, Expression, Filter, Operator, PropertyType } from 'geostyler-style/dist/style';
@@ -33,6 +27,8 @@ type CombinationOperatorsReverseMap = {
 type PrecedenceMap = {
   [name: string]: 1 | 2 | 3;
 };
+
+const isString = (value: any) => typeof value === 'string';
 
 export class CqlParser {
 
@@ -158,7 +154,7 @@ export class CqlParser {
         case '<=':
         case '>':
         case '>=':
-          const valueIsString = _isString(f[2]);
+          const valueIsString = isString(f[2]);
           let value = f[2];
           if (valueIsString) {
             value = `'${value}'`;
