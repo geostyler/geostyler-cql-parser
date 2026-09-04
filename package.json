@@ -61,7 +61,7 @@
     "buffer": "^6.0.3",
     "buffer-browserify": "^0.2.5",
     "conventional-changelog-conventionalcommits": "^9.1.0",
-    "eslint": "^9.34.0",
+    "eslint": "^10.0.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "graceful-js": "^1.0.0",
     "jison": "^0.4.18",
